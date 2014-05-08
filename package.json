@@ -1,0 +1,29 @@
+{
+  "name": "calvad_wim_sites",
+  "version": "0.0.1",
+  "description": "Get wim sites from couchdb or postgresql",
+  "main": "wim_sites.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jmarca/calvad_wim_sites"
+  },
+  "author": "James E. Marca",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/jmarca/calvad_wim_sites/issues"
+  },
+  "homepage": "https://github.com/jmarca/calvad_wim_sites",
+  "devDependencies": {
+    "should": "^3.3.1"
+  },
+  "dependencies": {
+    "config_okay": "0.0.2",
+      "couchdb_get_views":"jmarca/couchdb_get_views"
+  }
+}
