@@ -23,7 +23,6 @@
     "should": "^3.3.1"
   },
   "dependencies": {
-    "config_okay": "0.0.2",
       "couchdb_get_views":"jmarca/couchdb_get_views"
   }
 }
