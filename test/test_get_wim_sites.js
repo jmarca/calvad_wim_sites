@@ -10,7 +10,7 @@ var config_file = rootdir+'/../test.config.json'
 var config={}
 
 describe('get sites',function(){
-    it('should get all the wim sites',function(done){
+    it('should get all the wim sites that need imputing',function(done){
         wim_sites({'year':2007
                   ,'config_file':config_file}
                  ,function(e,r){
@@ -19,5 +19,16 @@ describe('get sites',function(){
             console.log(r)
             return done()
         })
+    })
+    it('should get all the wim sites that need plotting',function(done){
+        wim_sites.get_wim_need_plotting({'year':2008
+                                        ,'config_file':config_file}
+                                       ,function(e,r){
+                                            should.not.exist(e)
+                                            should.exist(r)
+                                            r.should.have.property('rows').with.lengthOf(80)
+                                            console.log(r)
+                                            return done()
+                                        })
     })
 })
