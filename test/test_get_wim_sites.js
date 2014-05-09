@@ -5,7 +5,6 @@ var wim_sites = require('../wim_sites')
 var path    = require('path')
 var rootdir = path.normalize(__dirname)
 
-var config_okay = require('config_okay')
 
 var config_file = rootdir+'/../test.config.json'
 var config={}
