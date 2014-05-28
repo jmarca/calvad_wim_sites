@@ -14,10 +14,10 @@ describe('get sites',function(){
         wim_sites({'year':2007
                   ,'config_file':config_file}
                  ,function(e,r){
-            should.not.exist(e)
-            should.exist(r)
-            console.log(r)
-            return done()
+                      should.not.exist(e)
+                      should.exist(r)
+                      //console.log(r)
+                      return done()
         })
     })
     it('should get all the wim sites that need plotting',function(done){
@@ -27,18 +27,18 @@ describe('get sites',function(){
                                             should.not.exist(e)
                                             should.exist(r)
                                             r.should.have.property('rows').with.lengthOf(80)
-                                            console.log(r)
+                                            //console.log(r)
                                             return done()
                                         })
     })
     it('should get all the wim sites that need pairing',function(done){
-        wim_sites.get_wim_need_pairing({'year':2010
+        wim_sites.get_wim_need_pairing({'year':2007
                                         ,'config_file':config_file}
                                        ,function(e,r){
                                             should.not.exist(e)
                                             should.exist(r)
                                             r.should.have.property('rows').with.lengthOf(86)
-                                            console.log(r)
+                                            //console.log(r)
                                             return done()
                                         })
     })

@@ -38,7 +38,7 @@ function get_wim_need_plotting(opts,cb){
 function get_wim_need_pairing(opts,cb){
     var year = +opts.year
     viewer({'view':'_design/wim/_view/pair_check_yr'
-           ,'startkey':[year ]
+           ,'startkey':[year]
            ,'endkey':[year,"\ufff0"]
            ,'reduce':false
            ,'config_file':opts.config_file
