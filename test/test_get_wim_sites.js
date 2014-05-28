@@ -31,4 +31,15 @@ describe('get sites',function(){
                                             return done()
                                         })
     })
+    it('should get all the wim sites that need pairing',function(done){
+        wim_sites.get_wim_need_pairing({'year':2010
+                                        ,'config_file':config_file}
+                                       ,function(e,r){
+                                            should.not.exist(e)
+                                            should.exist(r)
+                                            r.should.have.property('rows').with.lengthOf(86)
+                                            console.log(r)
+                                            return done()
+                                        })
+    })
 })
