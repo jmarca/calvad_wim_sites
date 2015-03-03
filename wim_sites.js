@@ -1,4 +1,5 @@
 var viewer = require('couchdb_get_views')
+var sites = require('./lib/sitelist.js');
 
 // pass in year, config_file (optional) in opts object
 function get_wim_need_imputing(opts,cb){
@@ -54,3 +55,4 @@ function get_wim_need_pairing(opts,cb){
 module.exports=get_wim_need_imputing
 module.exports.get_wim_need_plotting=get_wim_need_plotting
 module.exports.get_wim_need_pairing=get_wim_need_pairing
+module.exports.sites =  sites

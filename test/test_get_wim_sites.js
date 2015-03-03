@@ -42,4 +42,17 @@ describe('get sites',function(){
                                             return done()
                                         })
     })
+    it('should export the list of all WIM sites known about',function(done){
+        var sites = wim_sites.sites
+        should.exist(sites)
+        sites.should.have.lengthOf(117)
+
+        sites.forEach(function(entry,i){
+            entry.should.have.property('site')
+            entry.should.have.property('site_name')
+            return null
+        })
+        return done()
+    })
+
 })
