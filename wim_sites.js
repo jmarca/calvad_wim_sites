@@ -53,11 +53,11 @@ function get_wim_need_pairing(opts,cb){
 }
 
 // pass in year, config_file (optional) in opts object
-function get_wim_done_imputing(opts,cb){
+function get_wim_imputed_status(opts,cb){
     var year = +opts.year
-    viewer({'view':'_design/wim/_view/impute_finished_yr'
+    viewer({'view':'_design/wim/_view/imputed_status'
            ,'startkey':[year]
-           ,'endkey':[year,"\ufff0"] // check the semantics with newer couchdb
+           ,'endkey':[year,"\ufff0"] // verified high sentinel as of 1.6.2 couchdb
            ,'reduce':false
            ,'config_file':opts.config_file
            }
@@ -68,6 +68,21 @@ function get_wim_done_imputing(opts,cb){
            })
     return null
 }
+
+// need to fix up putview still
+// var fs = require('fs')
+// var viewdoc = require('./couchdb_views/wim.json')
+// // write views to db
+// function write_views(opts,cb){
+//     putview({db:db
+//             ,doc:design_doc}
+//            ,cb2)
+//     fs.readFile(viewfile, function (err, data) {
+//         if (err) throw err;
+//         design_doc = JSON.parse(data)
+//         cb(null)
+//     });
+// }
 
 module.exports=get_wim_need_imputing
 module.exports.get_wim_need_plotting=get_wim_need_plotting
