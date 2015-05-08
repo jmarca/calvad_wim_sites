@@ -26,7 +26,7 @@ describe('get sites',function(){
                                        ,function(e,r){
                                             should.not.exist(e)
                                             should.exist(r)
-                                            r.should.have.property('rows').with.lengthOf(80)
+                                            r.should.have.property('rows').with.lengthOf(25)
                                             //console.log(r)
                                             return done()
                                         })
@@ -53,6 +53,17 @@ describe('get sites',function(){
             return null
         })
         return done()
+    })
+    it('should get the imputed status of all the wim sites',function(done){
+        wim_sites.get_wim_imputed_status({'year':2012
+                                          ,'config_file':config_file}
+					 ,function(e,r){
+                                             should.not.exist(e)
+                                             should.exist(r)
+                                             r.should.have.property('rows').with.lengthOf(165)
+                                             //console.log(r)
+                                             return done()
+                                         })
     })
 
 })

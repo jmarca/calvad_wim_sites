@@ -10,8 +10,11 @@ function get_wim_need_imputing(opts,cb){
            ,'reduce':false
            ,'config_file':opts.config_file
            }
-          ,function(err,docs){
-               if(err) throw new Error('oops')
+           ,function(err,docs){
+               if(err){
+		   console.log(err)
+	           throw new Error('oops')
+	       }
                cb(null,docs)
                return null
            })
@@ -88,4 +91,4 @@ module.exports=get_wim_need_imputing
 module.exports.get_wim_need_plotting=get_wim_need_plotting
 module.exports.get_wim_need_pairing=get_wim_need_pairing
 module.exports.sites =  sites
-module.exports.get_wim_done_imputing=get_wim_done_imputing
+module.exports.get_wim_imputed_status=get_wim_imputed_status
