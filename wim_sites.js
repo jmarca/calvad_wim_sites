@@ -1,15 +1,30 @@
 var viewer = require('couchdb_get_views')
 var sites = require('./lib/sitelist.js');
 
+function set_couchdb_options(opts){
+    var o = {}
+    if(opts.config_file !== undefined){
+        o.config_file = opts.config_file
+        return o
+    }
+    if(opts.couchdb !== undefined){
+        Object.keys(opts.couchdb).forEach(function(k){
+            o[k] = opts.couchdb[k]
+        })
+        return o
+    }
+    return o
+}
 // pass in year, config_file (optional) in opts object
 function get_wim_need_imputing(opts,cb){
     var year = +opts.year
-    viewer({'view':'_design/wim/_view/imputed_status'
-           ,'startkey':[year,"nothing" ]
-           ,'endkey':[year,"nothing",{}]
-           ,'reduce':false
-           ,'config_file':opts.config_file
-           }
+    var o = set_couchdb_options(opts)
+    o['view'] = '_design/wim/_view/imputed_status'
+    o['startkey'] = [year,"nothing" ]
+    o['endkey'] = [year,"nothing",{}]
+    o['reduce'] = false
+
+    viewer(o
            ,function(err,docs){
                if(err){
 		   console.log(err)
@@ -24,12 +39,13 @@ function get_wim_need_imputing(opts,cb){
 // pass in year, config_file (optional) in opts object
 function get_wim_need_plotting(opts,cb){
     var year = +opts.year
-    viewer({'view':'_design/wim/_view/plot_status'
-           ,'startkey':[year,"nothing" ]
-           ,'endkey':[year,"nothing",{}]
-           ,'reduce':false
-           ,'config_file':opts.config_file
-           }
+    var o = set_couchdb_options(opts)
+    o['view'] = '_design/wim/_view/plot_status'
+    o['startkey'] = [year,"nothing" ]
+    o['endkey'] = [year,"nothing",{}]
+    o['reduce'] = false
+
+    viewer(o
           ,function(err,docs){
                if(err) throw new Error('oops')
                cb(null,docs)
@@ -41,12 +57,13 @@ function get_wim_need_plotting(opts,cb){
 // pass in year, config_file (optional) in opts object
 function get_wim_need_pairing(opts,cb){
     var year = +opts.year
-    viewer({'view':'_design/wim/_view/pair_check_yr'
-           ,'startkey':[year]
-           ,'endkey':[year,"\ufff0"]
-           ,'reduce':false
-           ,'config_file':opts.config_file
-           }
+    var o = set_couchdb_options(opts)
+    o['view']= '_design/wim/_view/pair_check_yr'
+    o['startkey'] = [year]
+    o['endkey'] = [year,"\ufff0"]
+    o['reduce'] = false
+
+    viewer(o
           ,function(err,docs){
                if(err) throw new Error('oops')
                cb(null,docs)
@@ -58,12 +75,12 @@ function get_wim_need_pairing(opts,cb){
 // pass in year, config_file (optional) in opts object
 function get_wim_imputed_status(opts,cb){
     var year = +opts.year
-    viewer({'view':'_design/wim/_view/imputed_status'
-           ,'startkey':[year]
-           ,'endkey':[year,"\ufff0"] // verified high sentinel as of 1.6.2 couchdb
-           ,'reduce':false
-           ,'config_file':opts.config_file
-           }
+    var o = set_couchdb_options(opts)
+    o['view']= '_design/wim/_view/imputed_status'
+    o['startkey'] = [year]
+    o['endkey'] = [year,"\ufff0"] // verified high sentinel as of 1.6.2 couchdb
+    o['reduce'] = false
+    viewer(o
           ,function(err,docs){
                if(err) throw new Error('oops')
                cb(null,docs)
