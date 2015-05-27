@@ -89,6 +89,22 @@ function get_wim_imputed_status(opts,cb){
     return null
 }
 
+function get_wim_merged(opts,cb){
+    var year = +opts.year
+    var o = set_couchdb_options(opts)
+    o['view']= '_design/wim/_view/merge_check_yr'
+    o['startkey'] = [year]
+    o['endkey'] = [year,"\ufff0"] // verified high sentinel as of 1.6.2 couchdb
+    o['reduce'] = false
+    viewer(o
+          ,function(err,docs){
+               if(err) throw new Error('oops')
+               cb(null,docs)
+               return null
+           })
+    return null
+}
+
 // need to fix up putview still
 // var fs = require('fs')
 // var viewdoc = require('./couchdb_views/wim.json')
@@ -109,3 +125,4 @@ module.exports.get_wim_need_plotting=get_wim_need_plotting
 module.exports.get_wim_need_pairing=get_wim_need_pairing
 module.exports.sites =  sites
 module.exports.get_wim_imputed_status=get_wim_imputed_status
+module.exports.get_wim_merged=get_wim_merged

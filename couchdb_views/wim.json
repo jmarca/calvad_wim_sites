@@ -37,7 +37,7 @@
             "reduce": "_count"
         },
         "merge_check_yr": {
-            "map": "function(doc) {\n  var re = new RegExp(\"wim\"); \n  if( re.test(doc._id) ){\n    var year_regex = new RegExp(\"^\\\\d{4}$\");\n    var keys = Object.keys(doc);\n    var ys = keys.filter(function(k){return year_regex.test(k)});\n    \n    ys.forEach(function(y){\n      var wim_dir = doc._id.split('.').slice(1);\n      if(wim_dir[1]===undefined) return null\n      if(doc[y].merged === undefined ) return null\n      if( doc[y].paired !== \"none\" && (doc[y].merged == 'nopair' || doc[y].merged == 'todo')){\n       emit([+y,wim_dir[0],wim_dir[1]], doc[y].merged);\n      }\n    })\n  }\n}",
+            "map": "function(doc) {\n  var re = new RegExp(\"wim\"); \n  if( re.test(doc._id) ){\n    var year_regex = new RegExp(\"^\\\\d{4}$\");\n    var keys = Object.keys(doc);\n    var ys = keys.filter(function(k){return year_regex.test(k)});\n    wim_dir = doc._id.split('.').slice(1);\n    if(wim_dir[1]===undefined) return null\n    wim_dir[0]=+wim_dir[0]\n\n    ys.forEach(function(y){\n      if(doc[y].merged === undefined ) return null\n      if(doc[y].merged === 'nopair' ) return null\n      emit([+y].concat(wim_dir,doc[y+''].merged), null)\n      return null\n    })\n  }\n}",
             "reduce": "_count"
         }
     }

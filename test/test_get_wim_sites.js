@@ -65,5 +65,17 @@ describe('get sites',function(){
                                              return done()
                                          })
     })
+    it('should get the list of merged wim/vds sites for a year',function(done){
+        wim_sites.get_wim_merged({'year':2012
+                                  ,'config_file':config_file}
+				 ,function(e,r){
+                                     should.not.exist(e)
+                                     should.exist(r)
+                                     r.should.have.property('rows')
+                                         .with.lengthOf(85)
+                                     //console.log(r)
+                                     return done()
+                                 })
+    })
 
 })
