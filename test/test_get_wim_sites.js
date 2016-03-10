@@ -54,16 +54,44 @@ describe('get sites',function(){
         })
         return done()
     })
-    it('should get the imputed status of all the wim sites',function(done){
+    it('should get the imputed status of all the wim sites 2012',function(done){
         wim_sites.get_wim_imputed_status({'year':2012
                                           ,'config_file':config_file}
 					 ,function(e,r){
+                                             var acct = {}
                                              should.not.exist(e)
                                              should.exist(r)
                                              r.should.have.property('rows').with.lengthOf(165)
-                                             //console.log(r)
+                                             r.rows.forEach(function(d){
+                                                 if(acct[d.key[1]] === undefined){
+                                                     acct[d.key[1]] = 1
+                                                 }else{
+                                                     acct[d.key[1]]++
+                                                 }
+                                             })
+                                             acct.finished.should.eql(140)
+                                             //console.log(acct)
                                              return done()
                                          })
+    })
+    it('should get the imputed status of all the wim sites 2012',function(done){
+        wim_sites({'year':2012
+                   ,'config_file':config_file}
+		  ,function(e,r){
+                      should.not.exist(e)
+                      should.exist(r)
+                      r.length.should.eql(0)
+                      return done()
+                  })
+    })
+    it('should return nothing at all if date out of range',function(done){
+        wim_sites({'year':2014
+                   ,'config_file':config_file}
+		  ,function(e,r){
+                      should.not.exist(e)
+                      should.not.exist(r)
+                      return done()
+                  })
     })
     it('should get the list of merged wim/vds sites for a year',function(done){
         wim_sites.get_wim_merged({'year':2012

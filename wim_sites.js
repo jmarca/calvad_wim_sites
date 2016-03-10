@@ -17,22 +17,23 @@ function set_couchdb_options(opts){
 }
 // pass in year, config_file (optional) in opts object
 function get_wim_need_imputing(opts,cb){
-    var year = +opts.year
-    var o = set_couchdb_options(opts)
-    o['view'] = '_design/wim/_view/imputed_status'
-    o['startkey'] = [year,"nothing" ]
-    o['endkey'] = [year,"nothing",{}]
-    o['reduce'] = false
+    // first call get imputed status, then sift the results.
 
-    viewer(o
-           ,function(err,docs){
-               if(err){
-		   console.log(err)
-	           throw new Error('oops')
-	       }
-               cb(null,docs)
-               return null
-           })
+    get_wim_imputed_status(opts,function(e,r){
+        var result = []
+        // match up against sites we know about
+        if(r.rows === undefined || r.rows.length === 0){
+            return cb()
+        }else{
+            r.rows.forEach(function(d){
+                if(d.key[1] === 'unprocessed'){
+                    result.push(d.id)
+                }
+            })
+            return cb(null,result)
+        }
+        return null
+    })
     return null
 }
 
