@@ -1,6 +1,6 @@
 {
   "name": "calvad_wim_sites",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Get wim sites from couchdb or postgresql",
   "main": "wim_sites.js",
   "directories": {
