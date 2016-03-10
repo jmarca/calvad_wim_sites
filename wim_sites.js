@@ -27,7 +27,6 @@ function get_wim_need_imputing(opts,cb){
         }else{
             r.rows.forEach(function(d){
                 if(d.key[1] != 'finished'){
-                    console.log('unprocessed')
                     result.push(d)
                 }
             })
