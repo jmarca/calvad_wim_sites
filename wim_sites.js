@@ -26,11 +26,12 @@ function get_wim_need_imputing(opts,cb){
             return cb()
         }else{
             r.rows.forEach(function(d){
-                if(d.key[1] === 'unprocessed'){
-                    result.push(d.id)
+                if(d.key[1] != 'finished'){
+                    console.log('unprocessed')
+                    result.push(d)
                 }
             })
-            return cb(null,result)
+            return cb(null,{'rows':result})
         }
         return null
     })
