@@ -21,14 +21,18 @@ function get_wim_need_imputing(opts,cb){
 
     get_wim_imputed_status(opts,function(e,r){
         var result = []
-        // match up against sites we know about
         if(r.rows === undefined || r.rows.length === 0){
             return cb()
         }else{
             r.rows.forEach(function(d){
+                // verify direction
+                if(d.key[3] === undefined){
+                    return null
+                }
                 if(d.key[1] != 'finished'){
                     result.push(d)
                 }
+                return null
             })
             return cb(null,{'rows':result})
         }

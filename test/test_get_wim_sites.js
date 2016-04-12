@@ -74,13 +74,17 @@ describe('get sites',function(){
                                              return done()
                                          })
     })
-    it('should get the imputed status of all the wim sites 2012',function(done){
+    it('should get the wim sites that have not yet been imputed successfully for some reason in 2012',function(done){
         wim_sites({'year':2012
                    ,'config_file':config_file}
 		  ,function(e,r){
                       should.not.exist(e)
                       should.exist(r)
-                      r.length.should.eql(0)
+                      r.should.have.property('rows').with.lengthOf(13)
+                      r.rows.forEach(function(d){
+                          d.key.should.not.match(/finished/i)
+                          return null
+                      })
                       return done()
                   })
     })
