@@ -1,0 +1,10 @@
+{
+    "_id": "_design\/tams",
+    "language": "javascript",
+    "views": {
+        "imputed_status": {
+            "map": "function(doc) {\n  var re = new RegExp(\"tams\");\n  if( re.test(doc._id) ){\n    var year_regex = new RegExp(\"^\\\\d{4}$\");\n    var keys = Object.keys(doc);\n    var ys = keys.filter(function(k){return year_regex.test(k)});\n    tams_dir = doc._id.split('.').slice(1);\n    tams_dir[0]=+tams_dir[0]\n    \/\/if(tams_dir.length==1){\n    \/\/    return null\n    \/\/}\n    ys.forEach(function(y){\n      if(doc[y+''].imputed === undefined){\n         emit([+y,'unprocessed'].concat(tams_dir), null)\n         return null\n      }\n      emit([+y,doc[y+''].imputed].concat(tams_dir), null)\n      return null\n    })\n  }\n}\n",
+            "reduce": "_count"
+        }
+    }
+}
