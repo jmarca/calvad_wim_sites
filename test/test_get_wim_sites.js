@@ -1,7 +1,7 @@
 /* global require console process describe it */
 
 var should = require('should')
-var wim_sites = require('../wim_sites')
+var wim_sites = require('../.')
 var path    = require('path')
 var rootdir = path.normalize(__dirname)
 
