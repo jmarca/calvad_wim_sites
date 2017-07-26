@@ -1,114 +1,153 @@
 /* global require console process describe it */
+/* global require console process describe it */
 
-var should = require('should')
+const tap = require('tap')
+
 var wim_sites = require('../.')
-var path    = require('path')
-var rootdir = path.normalize(__dirname)
+var path      = require('path')
+var rootdir   = path.normalize(__dirname)
 
 
 var config_file = rootdir+'/../test.config.json'
-var config={}
+const config_okay = require('config_okay')
+const utils =  require('./couch_utils.js')
+const demo_db_before = utils.demo_db_before
+const demo_db_after = utils.demo_db_after
 
-describe('get sites',function(){
-    it('should get all the tams sites that need imputing',function(done){
-        wim_sites.get_tams_need_imputing({'year':2017
-                                          ,'config_file':config_file}
-                                         ,function(e,r){
-                                             should.not.exist(e)
-                                             should.exist(r)
-                                             //console.log(r)
-                                             return done()
-                                         })
-    })
-    it('should get the imputed status of all the tams sites 2016',function(done){
-        wim_sites.get_tams_imputed_status({'year':2016
-                                          ,'config_file':config_file}
-					 ,function(e,r){
-                                             var acct = {}
-                                             should.not.exist(e)
-                                             should.exist(r)
-                                             r.should.have.property('rows').with.lengthOf(165)
-                                             r.rows.forEach(function(d){
-                                                 if(acct[d.key[1]] === undefined){
-                                                     acct[d.key[1]] = 1
-                                                 }else{
-                                                     acct[d.key[1]]++
-                                                 }
-                                             })
-                                             acct.finished.should.eql(140)
-                                             //console.log(acct)
-                                             return done()
-                                         })
-    })
-    it('should get the tams sites that have not yet been imputed successfully for some reason in 2016',function(done){
-        wim_sites.get_tams_need_imputing({'year':2016
-                                          ,'config_file':config_file}
-		                         ,function(e,r){
-                                             should.not.exist(e)
-                                             should.exist(r)
-                                             r.should.have.property('rows').with.lengthOf(13)
-                                             r.rows.forEach(function(d){
-                                                 d.key.should.not.match(/finished/i)
-                                                 return null
-                                             })
-                                             return done()
-                                         })
-    })
-    it('should return nothing at all if date out of range',function(done){
-        wim_sites.get_tams_need_imputing({'year':2024
-                                          ,'config_file':config_file}
-		                         ,function(e,r){
-                                             should.not.exist(e)
-                                             should.not.exist(r)
-                                             return done()
-                                         })
-    })
+tap.plan(5)
 
-    // it('should get all the tams sites that need plotting',function(done){
-    //     wim_sites.get_tams_need_plotting({'year':2017
-    //                                     ,'config_file':config_file}
-    //                                    ,function(e,r){
-    //                                         should.not.exist(e)
-    //                                         should.exist(r)
-    //                                         r.should.have.property('rows').with.lengthOf(25)
-    //                                         //console.log(r)
-    //                                         return done()
-    //                                     })
-    // })
-    // it('should get all the tams sites that need pairing',function(done){
-    //     wim_sites.get_tams_need_pairing({'year':2017
-    //                                     ,'config_file':config_file}
-    //                                    ,function(e,r){
-    //                                         should.not.exist(e)
-    //                                         should.exist(r)
-    //                                         r.should.have.property('rows').with.lengthOf(86)
-    //                                         //console.log(r)
-    //                                         return done()
-    //                                     })
-    // })
-    // it('should export the list of all TAMS sites known about',function(done){
-    //     var sites = tams_sites.sites
-    //     should.exist(sites)
-    //     sites.should.have.lengthOf(117)
 
-    //     sites.forEach(function(entry,i){
-    //         entry.should.have.property('site')
-    //         entry.should.have.property('site_name')
-    //         return null
-    //     })
-    //     return done()
-    // })
-    // it('should get the list of merged tams/vds sites for a year',function(done){
-    //     wim_sites.get_tams_merged({'year':2016
-    //                               ,'config_file':config_file}
-    //     			 ,function(e,r){
-    //                                  should.not.exist(e)
-    //                                  should.exist(r)
-    //                                  r.should.have.property('rows')
-    //                                      .with.lengthOf(85)
-    //                                  //console.log(r)
-    //                                  return done()
-    //                              })
-    // })
+function promise_wrapper(fn,arg){
+    return new Promise((resolve, reject)=>{
+        fn(arg,function(e,r){
+            if(e){
+                // console.log(e)
+                return reject(e)
+            }else{
+                // console.log(r)
+                return resolve(r)
+            }
+        })
+    })
+}
 
+
+tap.test('functions exist',function (t) {
+    t.plan(2)
+    t.ok( wim_sites.get_tams_need_imputing,'get_tams_need_imputing exists')
+    t.ok( wim_sites.get_tams_imputed_status,'get_tams_imputed_status exists')
+    t.end()
 })
+
+const tests = async (_config ) => {
+
+    await tap.test(function need_imputing_2016(t) {
+        return promise_wrapper(
+            wim_sites.get_tams_need_imputing
+            ,{'year':2016
+              ,'couchdb':_config.couchdb}
+        ).then((r)=>{
+            t.ok(r)
+            t.ok(r.rows)
+            t.is(r.rows.length,1,'got 1 tams sites that need imputing still')
+            t.is(r.rows[0].id,'tams.7005.E')
+            t.end()
+            return null
+        }).catch( err => {
+            console.log(err)
+            throw new Error(err)
+        })
+    })
+    await tap.test(function need_imputing_2017(t) {
+        return promise_wrapper(
+            wim_sites.get_tams_need_imputing
+            ,{'year':2017
+              ,'couchdb':_config.couchdb}
+        ).then( (r) =>{
+            // expect no result, as 2017 is out of range
+            t.ok(r.rows)
+            t.is(r.rows.length,0,'got 0 tams sites that need imputing still')
+            t.end()
+            return null
+        }).catch( err => {
+            console.log(err)
+            throw new Error(err)
+        })
+    })
+    await tap.test(function need_imputing_2027(t) {
+        return promise_wrapper(
+            wim_sites.get_tams_need_imputing
+            ,{'year':2027
+              ,'couchdb':_config.couchdb}
+        ).then( (r) =>{
+            // expect no result, as 2017 is out of range
+            t.notOk(r)
+            t.end()
+            return null
+        }).catch( err => {
+            console.log(err)
+            throw new Error(err)
+        })
+    })
+    await tap.test('should get the imputed status of all the tams sites 2017',(t)=>{
+        return promise_wrapper(
+            wim_sites.get_tams_imputed_status
+            ,{'year':2017
+              ,'couchdb':_config.couchdb}
+        ).then( (r) =>{
+            t.ok(r)
+            t.ok(r.rows)
+            //console.log(r.rows)
+            t.is(r.rows.length,2,'got all imputed status 2017')
+            const acct ={}
+            r.rows.forEach((d) => {
+                if(acct[d.key[1]] === undefined){
+                    acct[d.key[1]] = 1
+                }else{
+                    acct[d.key[1]]++
+                }
+            })
+            // should be sorted in id order, according to couchdb docs
+            t.is(r.rows[0].id,'tams.7005.E')
+            t.is(r.rows[1].id,'tams.7005.W')
+            t.is(acct.finished,2,'2 finished entries')
+            t.end()
+            return null
+        }).catch( err => {
+            console.log(err)
+            throw new Error(err)
+        })
+    })
+
+    tap.end()
+
+}
+config_okay(config_file)
+    .then( async (config) => {
+        // first set up the db
+        // then run the tests
+        // then tear down the db
+        // console.log(config)
+        const date = new Date()
+        const test_db_unique = [config.couchdb.db,
+                                date.getHours(),
+                                date.getMinutes(),
+                                date.getSeconds(),
+                                date.getMilliseconds()].join('-')
+        config.couchdb.db = test_db_unique
+        try {
+            await demo_db_before(config)
+
+            await tests(config)
+
+            await demo_db_after(config)
+        }catch (e){
+            console.log(e)
+            await demo_db_after(config)
+        }
+
+    })
+    .catch( err => {
+        console.log(err)
+        throw new Error(err)
+    })
