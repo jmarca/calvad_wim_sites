@@ -1,13 +1,14 @@
 {
   "name": "calvad_wim_sites",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Get wim sites from couchdb or postgresql",
-  "main": "wim_sites.js",
+  "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "tap test/**/test*.js --cov",
+    "posttest": "tap --coverage-report=lcov"
   },
   "repository": {
     "type": "git",
@@ -20,10 +21,12 @@
   },
   "homepage": "https://github.com/jmarca/calvad_wim_sites",
   "devDependencies": {
-    "mocha": "^2.4.5",
-    "should": "^3.3.1"
+    "config_okay": "^1.0.0",
+    "couchdb_put_view": "github:jmarca/couchdb_put_view",
+    "superagent": "^3.5.2",
+    "tap": "^10.7.0"
   },
   "dependencies": {
-    "couchdb_get_views": "jmarca/couchdb_get_views"
+    "couchdb_get_views": "github:jmarca/couchdb_get_views"
   }
 }
