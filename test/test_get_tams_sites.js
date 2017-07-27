@@ -1,6 +1,3 @@
-/* global require console process describe it */
-/* global require console process describe it */
-
 const tap = require('tap')
 
 var wim_sites = require('../.')
