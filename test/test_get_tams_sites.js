@@ -14,7 +14,7 @@ const utils =  require('./couch_utils.js')
 const demo_db_before = utils.demo_db_before
 const demo_db_after = utils.demo_db_after
 
-tap.plan(5)
+tap.plan(6)
 
 
 function promise_wrapper(fn,arg){
@@ -33,10 +33,29 @@ function promise_wrapper(fn,arg){
 
 
 tap.test('functions exist',function (t) {
-    t.plan(2)
+    t.plan(3)
     t.ok( wim_sites.get_tams_need_imputing,'get_tams_need_imputing exists')
     t.ok( wim_sites.get_tams_imputed_status,'get_tams_imputed_status exists')
+    t.ok( wim_sites.tams_sitelist,'tams_sitelist exists')
     t.end()
+})
+
+tap.test('should export the list of all TAMS sites known about',(t)=>{
+    var sites = wim_sites.tams_sitelist
+    t.ok(sites)
+    t.is(sites.length,116)
+    sites.forEach(function(entry,i){
+        t.ok(entry.site)
+        t.ok(entry.table_data)
+        Object.keys(entry.table_data).forEach(table=>{
+            const details = entry.table_data[table]
+            t.ok(details.mintime)
+            t.ok(details.maxtime)
+        })
+        return null
+    })
+    t.end()
+    return null
 })
 
 const tests = async (_config ) => {
