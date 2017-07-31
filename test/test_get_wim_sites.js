@@ -144,7 +144,6 @@ const tests = async (_config ) => {
         ).then( (r) =>{
             t.ok(r)
             t.ok(r.rows)
-            console.log(r.rows)
             t.is(r.rows.length,2,'got all imputed status 2008')
             const acct ={}
             r.rows.forEach((d) => {
@@ -154,7 +153,6 @@ const tests = async (_config ) => {
                     acct[d.key[1]]++
                 }
             })
-            console.log(acct)
             t.is(acct.finished,2,'2 finished entries')
             t.end()
             return null

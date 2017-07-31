@@ -1,33 +1,7 @@
-var superagent = require('superagent')
-var exec = require('child_process').exec
-var putview = require('couchdb_put_view')
+const superagent = require('superagent')
+const exec = require('child_process').exec
+const fixup_views = require('../lib/fixup_views.js')
 const file_dir = process.cwd()+'/test/files/'
-
-function put_a_view(opts){
-    return new Promise((resolve, reject)=>{
-        putview(opts,function(e,r){
-            if(e){
-                // console.log(e)
-                return reject(e)
-            }else{
-                // console.log(r)
-                return resolve(r)
-            }
-        })
-    })
-}
-function put_wim_views(config,db){
-    var opts = Object.assign({},config.couchdb)
-    opts.db = db
-    opts.doc = require('../couchdb_views/wim.json')
-    return put_a_view(opts)
-}
-function put_tams_views(config,db){
-    var opts = Object.assign({},config.couchdb)
-    opts.db = db
-    opts.doc = require('../couchdb_views/tams.json')
-    return put_a_view(opts)
-}
 
 
 function create_tempdb(config,db){
@@ -92,7 +66,7 @@ async function load_wim(config){
                    ]
     const jobs = load_files(config,db_files)
     // console.log('first jobs isArray',Array.isArray(jobs))
-    jobs.push(put_wim_views(config,config.couchdb.db))
+    jobs.push(fixup_views.put_wim_views(config,config.couchdb.db))
     return jobs
 }
 
@@ -101,7 +75,7 @@ async function load_tams(config){
                     ,file_dir+'tams.7005.W.json'
                    ]
     const jobs = load_files(config,db_files)
-    jobs.push(put_tams_views(config,config.couchdb.db))
+    jobs.push(fixup_views.put_tams_views(config,config.couchdb.db))
     // console.log('load tams,  jobs isArray',Array.isArray(jobs),jobs.length)
     return jobs
 }
