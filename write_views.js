@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var path = require('path');
-const fixup_views = require('./lib/fixup_views.js')
+const fixup_views = require('.').fixup_views
 
 const rootdir = path.normalize(process.cwd())
 
