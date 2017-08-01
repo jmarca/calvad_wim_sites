@@ -18,12 +18,11 @@ console.log('setting configuration file to ',config_file,'.  Change with the --c
 
 
 config_okay(config_file)
-    .then(config => {
+    .then(async (config) => {
         console.log('got config')
-        const wimjobs = fixup_views.put_wim_views(config,config.couchdb.db)
-        //console.log(wimjobs)
+        const wimjobs =  fixup_views.put_wim_views(config,config.couchdb.db)
         const tamsjobs = fixup_views.put_tams_views(config,config.couchdb.db)
-        //console.log(tamsjobs)
+
         const jobs = [].concat(wimjobs,tamsjobs)
         console.log(jobs)
         return Promise.all(jobs)

@@ -16,9 +16,10 @@ const delete_tempdb = utils.delete_tempdb
 const config_file_2 = 'view.test.config.json'
 const logfile = 'test_write_views.log'
 
+const fixup_views = require('../.').fixup_views
 
 
-tap.plan(2)
+tap.plan(4)
 
 
 function promise_wrapper(fn,arg){
@@ -36,6 +37,41 @@ function promise_wrapper(fn,arg){
 }
 
 
+function run_command (config,config_file){
+            return new Promise((resolve,reject)=>{
+            // run the command line program here
+            let logstream,errstream
+
+            const commandline = ['--config',config_file]
+            // console.log(commandline)
+            // return done()
+            var job  = spawn('write_views.js', commandline)
+            job.stderr.setEncoding('utf8')
+            job.stdout.setEncoding('utf8')
+            logstream = fs.createWriteStream(logfile
+                                             ,{flags: 'a'
+                                               ,encoding: 'utf8'
+                                               ,mode: 0o666 })
+            errstream = fs.createWriteStream(logfile
+                                             ,{flags: 'a'
+                                               ,encoding: 'utf8'
+                                               ,mode: 0o666 })
+            job.stdout.pipe(logstream)
+            job.stderr.pipe(errstream)
+
+
+            job.on('exit',(code,signal)=>{
+
+
+                // done doing work; now can run the tests
+                return resolve(config)
+            })
+            job.on('error', (err) => {
+                console.log('Failed',err)
+                return reject(err)
+            })
+        })
+}
 
 config_okay(config_file)
     .then( async (config) => {
@@ -69,40 +105,36 @@ config_okay(config_file)
                          })
         })
     })
+    .then( async (config)=>{
+        // now, with the db there, try writing wim views
+        const wimjobs = await fixup_views.put_wim_views(config,config.couchdb.db)
+        //const tamsjobs = fixup_views.put_tams_views(config,config.couchdb.db)
+
+        //const jobs = [].concat(wimjobs,tamsjobs)
+        //const jobs = []
+        // return Promise.all(jobs)
+        return config
+    })
+    .then( async (config)=>{
+        // tests
+        console.log('running tests on result of writing wim view')
+        // console.log('config is ',config)
+        // check that views exist in database
+        const cdb =
+              [config.couchdb.host+':'+config.couchdb.port
+               ,config.couchdb.db].join('/')
+        const uri_wim = cdb + '/' + '_design/wim'
+        const req_wim = superagent.head(uri_wim)
+          .type('json')
+          .auth(config.couchdb.auth.username
+                ,config.couchdb.auth.password)
+        const res = await req_wim
+        let etag = JSON.parse(res.headers.etag)
+        tap.match(etag,/^1-/)
+        return config
+    })
     .then( (config)=>{
-        return new Promise((resolve,reject)=>{
-            // run the command line program here
-            let logstream,errstream
-
-            const commandline = ['--config',config_file_2]
-            // console.log(commandline)
-            // return done()
-            var job  = spawn('write_views.js', commandline)
-            job.stderr.setEncoding('utf8')
-            job.stdout.setEncoding('utf8')
-            logstream = fs.createWriteStream(logfile
-                                             ,{flags: 'a'
-                                               ,encoding: 'utf8'
-                                               ,mode: 0o666 })
-            errstream = fs.createWriteStream(logfile
-                                             ,{flags: 'a'
-                                               ,encoding: 'utf8'
-                                               ,mode: 0o666 })
-            job.stdout.pipe(logstream)
-            job.stderr.pipe(errstream)
-
-
-            job.on('exit',(code,signal)=>{
-
-
-                // done doing work; now can run the tests
-                return resolve(config)
-            })
-            job.on('error', (err) => {
-                console.log('Failed',err)
-                return reject(err)
-            })
-        })
+        return run_command(config,config_file_2)
     })
     .then( async (config)=>{
         // tests
@@ -131,6 +163,19 @@ config_okay(config_file)
         })
         return config
     })
+    .then( (config)=>{
+        // now, even though already written, double write should not crash
+
+        return run_command(config,config_file_2)
+    })
+    .then( (config)=>{
+        // tests
+        // console.log('running tests on result of executable')
+        // console.log('config is ',config)
+        // check that views exist in database
+        tap.pass('did not crash writing duplicate views')
+        return config
+    })
     .then( async (config)=>{
         // cleanup
         try{
@@ -142,11 +187,8 @@ config_okay(config_file)
             if(e) console.log(e)
             throw e
         }
+        return config
     })
-
-
-
-    .catch( err => {
-        console.log(err)
-        throw new Error(err)
+    .catch( e =>{
+        console.log('failed with ',e)
     })
