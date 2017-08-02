@@ -144,10 +144,10 @@ config_okay(config_file)
 
             await tests(config)
 
-            //await demo_db_after(config)
+            await demo_db_after(config)
         }catch (e){
             console.log(e)
-            // await demo_db_after(config)
+            await demo_db_after(config)
         }
 
     })
