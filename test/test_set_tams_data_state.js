@@ -47,7 +47,7 @@ const tests = async (_config ) => {
             t.ok(r)
             t.ok(r.rows)
             t.is(r.rows.length,1,'got 1 tams sites that need imputing still')
-            t.is(r.rows[0].id,'tams.7005.E')
+            t.is(r.rows[0],'7005')
             return null
         }).then(()=>{
             // now, set a new data state
@@ -114,8 +114,8 @@ const tests = async (_config ) => {
             t.ok(r.rows)
             // console.log(r.rows)
             t.is(r.rows.length,2,'got 2 tams sites that need imputing still')
-            t.is(r.rows[0].id,'tams.4001')
-            t.is(r.rows[1].id,'tams.7005.E')
+            t.is(r.rows[0],'4001')
+            t.is(r.rows[1],'7005')
             t.end()
             return null
         }).catch( err => {
