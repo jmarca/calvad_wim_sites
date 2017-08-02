@@ -29,7 +29,8 @@
     "tap": "^10.7.0"
   },
   "dependencies": {
-    "superagent": "^3.5.2",
-    "couchdb_get_views": "github:jmarca/couchdb_get_views"
+    "couch_set_state": "github:jmarca/couch_set_state",
+    "couchdb_get_views": "github:jmarca/couchdb_get_views",
+    "superagent": "^3.5.2"
   }
 }

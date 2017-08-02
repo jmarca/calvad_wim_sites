@@ -66,7 +66,7 @@ const tests = async (_config ) => {
             t.ok(r)
             t.ok(r.rows)
             t.is(r.rows.length,1,'got 1 tams sites that need imputing still')
-            t.is(r.rows[0].id,'tams.7005.E')
+            t.is(r.rows[0],'7005')
             t.end()
             return null
         }).catch( err => {
