@@ -10,7 +10,9 @@
     "test": "tap test/**/test*.js --cov",
     "posttest": "tap --coverage-report=lcov"
   },
-    "bin" : { "write_views" : "./write_views.js" },
+  "bin": {
+    "write_views": "./write_views.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jmarca/calvad_wim_sites"
