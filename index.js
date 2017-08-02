@@ -16,6 +16,7 @@ module.exports.get_tams_imputed_status=tams_sites.get_tams_imputed_status
 module.exports.get_tams_need_imputing=tams_sites.get_tams_need_imputing
 module.exports.tams_sitelist =  tams_sitelist
 module.exports.tams_row_has_year = row_has_year
+module.exports.set_tams_data_state=tams_sites.set_tams_data_state
 
 module.exports.fixup_views = fixup_views
 
