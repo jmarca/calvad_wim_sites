@@ -31,6 +31,6 @@
   "dependencies": {
     "couch_set_state": "github:jmarca/couch_set_state",
     "couchdb_get_views": "github:jmarca/couchdb_get_views",
-    "superagent": "^3.5.2"
+    "superagent": "^3.8.3"
   }
 }
